@@ -25,7 +25,7 @@ router.post("/login", (req, res) => {
           }
           const token = jwt.sign(
             {
-              hospitalName: hospital.hospitalName,
+              name: hospital.hospitalName,
               location: hospital.location,
               id: hospital.id
             },
@@ -70,7 +70,7 @@ router.post("/register", (req, res) => {
             } else {
               const token = jwt.sign(
                 {
-                  hospitalName: newHospital.hospitalName,
+                  name: newHospital.hospitalName,
                   location: newHospital.location
                 },
                 keys.JWT_KEY,
