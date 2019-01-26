@@ -2,13 +2,15 @@ import React, { Component } from "react";
 import { connect } from "react-redux";
 import socketIOClient from "socket.io-client";
 import * as actionCreators from "../../store/actions/index";
-//import { google } from "react-google-maps";
+import Directions from "../Directions/Directions";
+import axios from "axios";
 
 const MyGoogleMap = React.lazy(() => import("../MyGoogleMap/MyGoogleMap"));
 
 class WaitAccident extends Component {
   state = {
-    directions: false
+    directions: false,
+    address: []
   };
 
   componentDidMount() {
@@ -48,6 +50,31 @@ class WaitAccident extends Component {
           }
         }
       );
+      // set Google Maps Geocoding
+      axios
+        .get(
+          "https://maps.google.com/maps/api/geocode/json?latlng=" +
+            this.props.auth.location.coordinates[1] +
+            "," +
+            this.props.auth.location.coordinates[0] +
+            "&key=AIzaSyBwxuW2cdXbL38w9dcPOXfGLmi1J7AVVB8&language=ar"
+        )
+        .then(res => this.setState({ address: res.data.results }))
+        .catch(error => {
+          console.log(error);
+        });
+
+      // fetch(
+      //   "https://maps.google.com/maps/api/geocode/json?latlng=" +
+      //     this.props.auth.location.coordinates[1] +
+      //     "," +
+      //     this.props.auth.location.coordinates[0] +
+      //     "&key=AIzaSyBwxuW2cdXbL38w9dcPOXfGLmi1J7AVVB8&language=ar"
+      // ).then(res =>
+      //   res.json().then(data => {
+      //     console.log(data);
+      //   })
+      // );
     });
   }
   render() {
@@ -63,7 +90,7 @@ class WaitAccident extends Component {
           accident={this.props.accident}
           directions={this.state.directions}
         />
-        <div>accident info</div>
+        <Directions address={this.state.address} />
       </div>
     );
   }
