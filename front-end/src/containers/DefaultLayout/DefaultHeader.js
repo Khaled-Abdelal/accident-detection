@@ -17,8 +17,8 @@ import {
   AppNavbarBrand,
   AppSidebarToggler
 } from "@coreui/react";
-import logo from "../../assets/img/brand/logo.svg";
-import sygnet from "../../assets/img/brand/sygnet.svg";
+//import logo from "../../assets/img/brand/accidentLogo.svg";
+//import sygnet from "../../assets/img/brand/accidentLogo.svg";
 
 const propTypes = {
   children: PropTypes.node
@@ -34,21 +34,18 @@ class DefaultHeader extends Component {
     return (
       <React.Fragment>
         <AppSidebarToggler className="d-lg-none" display="md" mobile />
-        <AppNavbarBrand
-          full={{ src: logo, width: 89, height: 25, alt: "CoreUI Logo" }}
-          minimized={{ src: sygnet, width: 30, height: 30, alt: "CoreUI Logo" }}
-        />
+        {/* <AppNavbarBrand
+        // full={{ src: logo, width: 89, height: 25, alt: "CoreUI Logo" }}
+        // minimized={{ src: sygnet, width: 30, height: 30, alt: "CoreUI Logo" }}
+        /> */}
+        <a className="navbar-brand" href="#">
+          Logo
+        </a>
         <AppSidebarToggler className="d-md-down-none" display="lg" />
 
         <Nav className="d-md-down-none" navbar>
           <NavItem className="px-3">
-            <NavLink href="/">Dashboard</NavLink>
-          </NavItem>
-          <NavItem className="px-3">
-            <Link to="/users">Users</Link>
-          </NavItem>
-          <NavItem className="px-3">
-            <NavLink href="#">Settings</NavLink>
+            <NavLink href="/dashboard">Dashboard</NavLink>
           </NavItem>
         </Nav>
         <Nav className="ml-auto" navbar>
@@ -76,7 +73,7 @@ class DefaultHeader extends Component {
           <AppHeaderDropdown direction="down">
             <DropdownToggle nav>
               <img
-                src={"../../assets/img/avatars/6.jpg"}
+                src={"../../assets/img/avatars/avatar.png"}
                 className="img-avatar"
                 alt="admin@bootstrapmaster.com"
               />

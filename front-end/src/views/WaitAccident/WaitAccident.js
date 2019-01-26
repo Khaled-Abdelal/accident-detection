@@ -54,27 +54,15 @@ class WaitAccident extends Component {
       axios
         .get(
           "https://maps.google.com/maps/api/geocode/json?latlng=" +
-            this.props.auth.location.coordinates[1] +
+            this.props.accident.location[1] +
             "," +
-            this.props.auth.location.coordinates[0] +
+            this.props.accident.location[0] +
             "&key=AIzaSyBwxuW2cdXbL38w9dcPOXfGLmi1J7AVVB8&language=ar"
         )
         .then(res => this.setState({ address: res.data.results }))
         .catch(error => {
           console.log(error);
         });
-
-      // fetch(
-      //   "https://maps.google.com/maps/api/geocode/json?latlng=" +
-      //     this.props.auth.location.coordinates[1] +
-      //     "," +
-      //     this.props.auth.location.coordinates[0] +
-      //     "&key=AIzaSyBwxuW2cdXbL38w9dcPOXfGLmi1J7AVVB8&language=ar"
-      // ).then(res =>
-      //   res.json().then(data => {
-      //     console.log(data);
-      //   })
-      // );
     });
   }
   render() {
@@ -90,7 +78,9 @@ class WaitAccident extends Component {
           accident={this.props.accident}
           directions={this.state.directions}
         />
-        <Directions address={this.state.address} />
+        {this.props.accident ? (
+          <Directions address={this.state.address} />
+        ) : null}
       </div>
     );
   }
