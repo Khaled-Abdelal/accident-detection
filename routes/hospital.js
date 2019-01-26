@@ -29,10 +29,7 @@ router.post("/login", (req, res) => {
               location: hospital.location,
               id: hospital.id
             },
-            keys.JWT_KEY,
-            {
-              expiresIn: "20h"
-            }
+            keys.JWT_KEY
           );
 
           return res.status(200).json({
@@ -44,19 +41,18 @@ router.post("/login", (req, res) => {
     });
 });
 
-router.post("/register", (req, res) => {
+router.post("/", (req, res) => {
   const { hospitalName, password, location } = req.body;
 
   Hospital.findOne({ hospitalName: hospitalName })
     .exec()
     .then(hospital => {
       if (hospital) {
-        res.json({ message: "hospital already registered" });
+        return res.json({ message: "hospital already registered" });
       } else {
         bcrypt.hash(password, 8, (err, hash) => {
           if (err) {
-            console.log("hash error");
-            return res.status(500).json({ error: "couldn't register" });
+            return res.status(500).json({ error: err });
           }
           const newHospital = new Hospital({
             hospitalName,
@@ -66,19 +62,16 @@ router.post("/register", (req, res) => {
           newHospital.save(function(err) {
             if (err) {
               console.log(err);
-              return res.status(500).json({ error: "couldn't register" });
+              return res.json({ error: "couldn't register" });
             } else {
               const token = jwt.sign(
                 {
                   name: newHospital.hospitalName,
                   location: newHospital.location
                 },
-                keys.JWT_KEY,
-                {
-                  expiresIn: "10h"
-                }
+                keys.JWT_KEY
               );
-              return res.status(200).json({ message: "success", toke: token });
+              return res.status(200).json({ message: "success", token: token });
             }
           });
         });

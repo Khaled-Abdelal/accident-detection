@@ -8,9 +8,11 @@ const PORT = process.env.PORT || 5000;
 const mongoose = require("mongoose");
 const keys = require("./config/keys");
 require("./models/Hospital");
+require("./models/User");
 
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
+app.use("/uploads", express.static("uploads"));
 app.use((req, res, next) => {
   req.io = io;
   next();
@@ -19,6 +21,8 @@ app.use((req, res, next) => {
 app.use("/api/hospital", require("./routes/hospital"));
 // accident routes
 app.use("/api/accident", require("./routes/accident"));
+//user routes
+app.use("/api/user", require("./routes/user"));
 
 mongoose.connect(
   keys.mongoURI,
