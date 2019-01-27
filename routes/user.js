@@ -105,9 +105,20 @@ router.put("/:id", upload.single("picture"), async (req, res) => {
   if (req.file) {
     req.body.picture = req.file.path;
   }
-
-  user = await User.findOneAndUpdate({ _id: req.params.id }, req.body).exec();
-  updatedUser = await User.findById(req.params.id).exec();
-  return res.json({ user: updatedUser });
+  if (req.body.password) {
+    bcrypt.hash(req.body.password, 8, async (err, hash) => {
+      if (err) {
+        console.log("hash error");
+        return res.status(500).json({ error: "couldn't update" });
+      }
+      req.body.password = hash;
+      user = await User.findOneAndUpdate(
+        { _id: req.params.id },
+        req.body
+      ).exec();
+      updatedUser = await User.findById(req.params.id).exec();
+      return res.json({ user: updatedUser });
+    });
+  }
 });
 module.exports = router;

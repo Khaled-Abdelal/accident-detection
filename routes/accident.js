@@ -1,11 +1,23 @@
 const express = require("express");
 const router = express.Router();
 const Hospital = require("../models/Hospital");
+const User = require("./../models/User");
 
 router.post("/", async (req, res) => {
-  const location = req.body.location;
+  const { location, device_id } = req.body;
 
-  console.log("route hit location " + location + " io " + req.io.sockets);
+  console.log("route hit location " + location);
+  try {
+    var user = await User.findOne({ device_id: device_id })
+      .select({ password: 0, type: 0 })
+      .exec();
+    if (!user) {
+      return res.status(404).json({ error: "no user with this device id" });
+    }
+  } catch (err) {
+    console.log(err);
+    return res.status(500).json({ error: "internal server error" });
+  }
   const hospitals = await Hospital.aggregate([
     {
       $geoNear: {
@@ -24,7 +36,9 @@ router.post("/", async (req, res) => {
   ]);
   hospitals.forEach(hospital => {
     console.log(hospital._id);
-    req.io.sockets.in(hospital._id).emit("accident", { location: location });
+    req.io.sockets
+      .in(hospital._id)
+      .emit("accident", { location: location, user: user });
   });
 
   res.end();
