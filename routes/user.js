@@ -20,8 +20,25 @@ const upload = multer({ storage: storage });
 
 // signup route
 router.post("/", upload.single("picture"), (req, res) => {
-  const { name, password, device_id } = req.body;
-  if (!name || !password || !device_id || !req.file) {
+  const {
+    name,
+    password,
+    device_id,
+    address,
+    phoneNumber,
+    bloodType,
+    nextOfKin
+  } = req.body;
+  if (
+    !name ||
+    !password ||
+    !device_id ||
+    !req.file ||
+    !address ||
+    !phoneNumber ||
+    !bloodType ||
+    !nextOfKin
+  ) {
     return res.json({ error: "all fields are required" });
   }
   const picture = req.file.path;
@@ -34,21 +51,29 @@ router.post("/", upload.single("picture"), (req, res) => {
 
     User.create(
       {
-        name: name,
-        picture: picture,
-        device_id: device_id,
-        password: hash
+        name,
+        picture,
+        device_id,
+        password: hash,
+        address,
+        bloodType,
+        nextOfKin,
+        phoneNumber
       },
-      (err, user) => {
+      err => {
         if (err) {
           console.log(err);
           return res.json({ error: "couldn't register" });
         }
         const token = jwt.sign(
           {
-            name: name,
-            device_id: device_id,
-            picture: picture
+            name,
+            device_id,
+            picture,
+            address,
+            bloodType,
+            nextOfKin,
+            phoneNumber
           },
           keys.JWT_USER_KEY
         );
@@ -78,7 +103,11 @@ router.post("/login", async (req, res) => {
     {
       name: user.name,
       device_id: user.device_id,
-      picture: user.picture
+      picture: user.picture,
+      address: user.address,
+      bloodType: bloodType,
+      nextOfKin: user.nextOfKin,
+      phoneNumber: user.phoneNumber
     },
     keys.JWT_USER_KEY
   );
@@ -106,19 +135,15 @@ router.put("/:id", upload.single("picture"), async (req, res) => {
     req.body.picture = req.file.path;
   }
   if (req.body.password) {
-    bcrypt.hash(req.body.password, 8, async (err, hash) => {
-      if (err) {
-        console.log("hash error");
-        return res.status(500).json({ error: "couldn't update" });
-      }
-      req.body.password = hash;
-      user = await User.findOneAndUpdate(
-        { _id: req.params.id },
-        req.body
-      ).exec();
-      updatedUser = await User.findById(req.params.id).exec();
-      return res.json({ user: updatedUser });
-    });
+    const hash = bcryptSync.hash(req.body.password, 8);
+    // if (err) {
+    //   console.log("hash error");
+    //   return res.status(500).json({ error: "couldn't update" });
+    // }
+    req.body.password = hash;
   }
+  user = await User.findOneAndUpdate({ _id: req.params.id }, req.body).exec();
+  updatedUser = await User.findById(req.params.id).exec();
+  return res.json({ user: updatedUser });
 });
 module.exports = router;
