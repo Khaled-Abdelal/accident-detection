@@ -3,6 +3,7 @@ import { connect } from "react-redux";
 import socketIOClient from "socket.io-client";
 import * as actionCreators from "../../store/actions/index";
 import Directions from "../Directions/Directions";
+import UserWithAccident from "../UserWithAccident/UserWithAccident";
 import axios from "axios";
 
 const MyGoogleMap = React.lazy(() => import("../MyGoogleMap/MyGoogleMap"));
@@ -80,6 +81,9 @@ class WaitAccident extends Component {
         />
         {this.props.accident ? (
           <Directions address={this.state.address} />
+        ) : null}
+        {this.props.accident ? (
+          <UserWithAccident user={this.props.accident.user} />
         ) : null}
       </div>
     );
