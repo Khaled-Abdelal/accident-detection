@@ -40,11 +40,11 @@ io.on("connection", socket => {
 
 if (process.env.NODE_ENV === "production") {
   // serve static files
-  app.use(express.static("client/build"));
+  app.use(express.static("front-end/build"));
   /// serve the index.html in production
   const path = require("path");
   app.get("*", (req, res) => {
-    res.sendFile(path.resolve(__dirname, "client", "build", "index.html"));
+    res.sendFile(path.resolve(__dirname, "front-end", "build", "index.html"));
   });
 }
 
