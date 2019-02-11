@@ -24,12 +24,9 @@ app.use("/api/accident", require("./routes/accident"));
 //user routes
 app.use("/api/user", require("./routes/user"));
 
-mongoose.connect(
-  keys.mongoURI,
-  { useNewUrlParser: true, useCreateIndex: true }
-);
-app.get("/", (req, res) => {
-  res.send("hello");
+mongoose.connect(keys.mongoURI, {
+  useNewUrlParser: true,
+  useCreateIndex: true
 });
 
 io.on("connection", socket => {
@@ -40,6 +37,16 @@ io.on("connection", socket => {
     socket.join(data.id); // We are using room of socket io
   });
 });
+
+if (process.env.NODE_ENV === "production") {
+  // serve static files
+  app.use(express.static("client/build"));
+  /// serve the index.html in production
+  const path = require("path");
+  app.get("*", (req, res) => {
+    res.sendFile(path.resolve(__dirname, "client", "build", "index.html"));
+  });
+}
 
 http.listen(PORT, function() {
   console.log("listening on localhost:" + PORT);

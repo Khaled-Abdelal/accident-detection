@@ -1,6 +1,9 @@
-module.exports = {
-  mongoURI:
-    "mongodb://khaled:fZxnTgj6ezrZXbW@ds159624.mlab.com:59624/accident_detection",
-  JWT_KEY: "secret",
-  JWT_USER_KEY: "user secret key"
-};
+/// are you in production or development
+
+if (process.env.NODE_ENV === "production") {
+  // we are in production
+  module.exports = require("./prod.js");
+} else {
+  // we are in development return dev keys
+  module.exports = require("./dev");
+}
