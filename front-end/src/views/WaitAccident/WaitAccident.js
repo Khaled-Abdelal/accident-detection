@@ -15,7 +15,7 @@ class WaitAccident extends Component {
   };
 
   componentDidMount() {
-    const socket = socketIOClient.connect("http://localhost:5000");
+    const socket = socketIOClient("/");
     // make connection
     socket.on("connection", console.log("initial connection "));
     // join a specific room
