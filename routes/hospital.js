@@ -41,7 +41,13 @@ router.post("/login", (req, res) => {
       }
     });
 });
+//// get all hospitals
+router.get("/", async (req, res) => {
+  const hospitals = await Hospital.find().select("-password");
+  res.send(hospitals);
+});
 
+////  new hospital
 router.post("/", (req, res) => {
   const { hospitalName, password, location } = req.body;
 

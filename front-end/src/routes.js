@@ -26,9 +26,10 @@ import DefaultLayout from "./containers/DefaultLayout";
 //const Buttons = React.lazy(() => import("./views/Buttons/Buttons"));
 //const Charts = React.lazy(() => import("./views/Charts"));
 //const Dashboard = React.lazy(() => import("./views/Dashboard"));
-const WaitAcciden = React.lazy(() =>
+const WaitAccident = React.lazy(() =>
   import("./views/WaitAccident/WaitAccident")
 );
+const ShowData = React.lazy(() => import("./views/ShowData/ShowData"));
 
 //const CoreUIIcons = React.lazy(() => import("./views/Icons/CoreUIIcons"));
 // const Flags = React.lazy(() => import("./views/Icons/Flags"));
@@ -48,7 +49,9 @@ const WaitAcciden = React.lazy(() =>
 // https://github.com/ReactTraining/react-router/tree/master/packages/react-router-config
 const routes = [
   { path: "/", exact: true, name: "Home", component: DefaultLayout },
-  { path: "/dashboard", name: "Dashboard", component: WaitAcciden }
+  { path: "/accident", name: "Dashboard", component: WaitAccident },
+  { path: "/hospitals", name: "Hospitals", component: ShowData },
+  { path: "/users", name: "Hospitals", component: ShowData }
 ];
 
 export default routes;

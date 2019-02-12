@@ -44,7 +44,7 @@ class DefaultLayout extends Component {
           <Suspense fallback={this.loading()}>
             <DefaultHeader
               onLogout={e => this.signOut(e)}
-              authName={this.props.authName}
+              authName={this.props.auth.name}
             />
           </Suspense>
         </AppHeader>
@@ -74,7 +74,11 @@ class DefaultLayout extends Component {
                       />
                     ) : null;
                   })}
-                  <Redirect from="/" to="/dashboard" />
+                  {this.props.auth.loginMode === "hospital" ? (
+                    <Redirect from="/" to="/accident" />
+                  ) : (
+                    <Redirect from="/" to="/hospitals" />
+                  )}
                 </Switch>
               </Suspense>
             </Container>
@@ -97,7 +101,7 @@ class DefaultLayout extends Component {
 
 const mapStateToProps = state => {
   return {
-    authName: state.auth.auth.name
+    auth: state.auth.auth
   };
 };
 
