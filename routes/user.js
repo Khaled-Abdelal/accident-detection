@@ -73,7 +73,8 @@ router.post("/", upload.single("picture"), (req, res) => {
             address,
             bloodType,
             nextOfKin,
-            phoneNumber
+            phoneNumber,
+            loginMode: "user"
           },
           keys.JWT_USER_KEY
         );
@@ -105,9 +106,10 @@ router.post("/login", async (req, res) => {
       device_id: user.device_id,
       picture: user.picture,
       address: user.address,
-      bloodType: bloodType,
+      bloodType: user.bloodType,
       nextOfKin: user.nextOfKin,
-      phoneNumber: user.phoneNumber
+      phoneNumber: user.phoneNumber,
+      loginMode: "user"
     },
     keys.JWT_USER_KEY
   );

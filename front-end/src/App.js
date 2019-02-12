@@ -41,11 +41,7 @@ const Page500 = Loadable({
 
 class App extends Component {
   state = {
-    toLogin: true,
-    hospitalName: "",
-    password: "",
-    error: "",
-    loggedHospital: {}
+    toLogin: true
   };
 
   componentDidMount() {
@@ -59,17 +55,15 @@ class App extends Component {
       <Switch>
         <Route
           exact
-          path="/login"
+          path="/login/hospital"
           name="Login Page"
-          render={props => (
-            <Login
-              {...props}
-              hospitalName={this.state.hospitalName}
-              password={this.state.password}
-              onInputChange={this.onInputChange}
-              onHospitalSubmit={this.onHospitalSubmit}
-            />
-          )}
+          render={props => <Login {...props} loginMode="hospital" />}
+        />
+        <Route
+          exact
+          path="/login/user"
+          name="Login Page"
+          render={props => <Login {...props} loginMode="user" />}
         />
         <Route
           exact
@@ -86,7 +80,7 @@ class App extends Component {
             this.props.isAuth ? (
               <DefaultLayout hospital={this.props.user} />
             ) : (
-              <Redirect to="/login" />
+              <Redirect to="/login/hospital" />
             )
           }
         />

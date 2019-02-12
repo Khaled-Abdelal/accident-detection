@@ -27,6 +27,12 @@ export default function(state = initialState, action) {
         ...state,
         auth: loggeduser
       };
+    case actionTypes.LOGIN_FAIL:
+      localStorage.removeItem("auth-token");
+      return {
+        ...state,
+        auth: null
+      };
     default:
       return state;
   }
