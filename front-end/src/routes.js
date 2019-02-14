@@ -30,6 +30,7 @@ const WaitAccident = React.lazy(() =>
   import("./views/WaitAccident/WaitAccident")
 );
 const ShowData = React.lazy(() => import("./views/ShowData/ShowData"));
+const Profile = React.lazy(() => import("./views/Profile/Profile"));
 
 //const CoreUIIcons = React.lazy(() => import("./views/Icons/CoreUIIcons"));
 // const Flags = React.lazy(() => import("./views/Icons/Flags"));
@@ -47,11 +48,17 @@ const ShowData = React.lazy(() => import("./views/ShowData/ShowData"));
 // const User = React.lazy(() => import("./views/Users/User"));
 
 // https://github.com/ReactTraining/react-router/tree/master/packages/react-router-config
-const routes = [
-  { path: "/", exact: true, name: "Home", component: DefaultLayout },
-  { path: "/accident", name: "Dashboard", component: WaitAccident },
-  { path: "/hospitals", name: "Hospitals", component: ShowData },
-  { path: "/users", name: "Hospitals", component: ShowData }
+export const routes = [
+  {
+    path: "/dashboard",
+    exact: true,
+    name: "Dashboard",
+    component: DefaultLayout
+  },
+  { path: "/dashboard/accident", name: "Accident", component: WaitAccident }
+  //  { path: "/dashboard/profile", name: "Profile", component: Profile }
 ];
-
-export default routes;
+export const adminRoutes = [
+  { path: "/dashboard/hospitals", name: "Hospitals", component: ShowData },
+  { path: "/dashboard/users", name: "Users", component: ShowData }
+];

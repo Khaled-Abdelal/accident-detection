@@ -47,7 +47,7 @@ class App extends Component {
   componentDidMount() {
     if (localStorage.getItem("auth-token") != null) {
       this.props.getUserFromLocalStorage();
-      this.props.history.push("dashboard");
+      //this.props.history.push("dashboard");
     }
   }
   render() {
@@ -74,7 +74,7 @@ class App extends Component {
         <Route exact path="/404" name="Page 404" component={Page404} />
         <Route exact path="/500" name="Page 500" component={Page500} />
         <Route
-          path="/"
+          path="/dashboard"
           name="Home"
           component={() =>
             this.props.isAuth ? (
@@ -84,6 +84,7 @@ class App extends Component {
             )
           }
         />
+        <Route path="/" component={() => <Redirect to="/dashboard" />} />
       </Switch>
     );
   }

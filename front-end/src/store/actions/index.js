@@ -4,7 +4,9 @@ import {
   LOGIN_FAIL,
   GET_USER_FROM_LOCAL_STORAGE,
   SIGN_OUT,
-  ACCIDENT_START
+  ACCIDENT_START,
+  SET_ADDRESS,
+  SET_ROUTE
 } from "../actions/types";
 
 export const loginStart = (name, password, loginMode) => {
@@ -56,6 +58,23 @@ export const accidentStart = accident => {
     type: ACCIDENT_START,
     payload: {
       accident
+    }
+  };
+};
+
+export const setAddress = address => {
+  return {
+    type: SET_ADDRESS,
+    payload: {
+      address
+    }
+  };
+};
+export const setRoute = route => {
+  return {
+    type: SET_ROUTE,
+    payload: {
+      route
     }
   };
 };

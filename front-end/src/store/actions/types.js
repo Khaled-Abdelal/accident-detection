@@ -4,3 +4,5 @@ export const LOGIN_FAIL = "LOGIN_FAIL";
 export const GET_USER_FROM_LOCAL_STORAGE = "GET_USER_FROM_LOCAL_STORAGE";
 export const SIGN_OUT = "SIGN_OUT";
 export const ACCIDENT_START = "ACCIDENT_START";
+export const SET_ADDRESS = "SET_ADDRESS";
+export const SET_ROUTE = "SET_ROUTE";

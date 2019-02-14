@@ -18,7 +18,7 @@ const UserSchema = new Schema({
   phoneNumber: { type: Number, required: true },
   bloodType: { type: String, required: true },
   isDonor: { type: Boolean, default: false },
-  type: { type: String, default: "user" },
+  isAdmin: { type: Boolean, default: false },
   nextOfKin: { type: Relative, required: true }
 });
 

@@ -1,6 +1,6 @@
 import React from "react";
 
-const UserWithAccident = props => {
+const Profile = props => {
   return (
     <div className="container emp-profile">
       <div className="row">
@@ -107,4 +107,4 @@ const UserWithAccident = props => {
   );
 };
 
-export default UserWithAccident;
+export default Profile;

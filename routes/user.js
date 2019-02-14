@@ -118,8 +118,8 @@ router.post("/login", async (req, res) => {
 
 // get all users
 router.get("/", async (req, res) => {
-  user = await User.find({}).exec();
-  return res.json({ users: user });
+  const users = await User.find({}).exec();
+  return res.send(users);
 });
 // get user by id
 router.get("/:id", async (req, res) => {
