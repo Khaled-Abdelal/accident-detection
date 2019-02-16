@@ -5,6 +5,8 @@ import Profile from "../../views/Profile/Profile";
 
 import { connect } from "react-redux";
 import * as actionCreators from "../../store/actions/index";
+import { usersColumns, hospitalsColumns } from "../../utils/datatableColumns";
+import { formatUsers, formatHospitals } from "../../utils/formatResource";
 
 import {
   AppBreadcrumb,
@@ -20,7 +22,7 @@ import {
 // sidebar nav config
 import navigation from "../../_nav";
 // routes config
-import { routes, adminRoutes } from "../../routes";
+import { routes } from "../../routes";
 
 //const DefaultAside = React.lazy(() => import("./DefaultAside"));
 const DefaultFooter = React.lazy(() => import("./DefaultFooter"));
@@ -29,6 +31,9 @@ const DefaultHeader = React.lazy(() => import("./DefaultHeader"));
 const WaitAccident = React.lazy(() =>
   import("../../views/WaitAccident/WaitAccident")
 );
+// admin route
+const ShowData = React.lazy(() => import("../../views/ShowData/ShowData"));
+
 class DefaultLayout extends Component {
   componentDidMount = () => {
     if (this.props.auth.loginMode === "user") {
@@ -104,19 +109,32 @@ class DefaultLayout extends Component {
 
                   {/* admin routes */}
                   {this.props.auth.loginMode === "user" &&
-                  !this.props.auth.isAdmin
-                    ? adminRoutes.map((route, idx) => {
-                        return route.component ? (
-                          <Route
-                            key={idx}
-                            path={route.path}
-                            exact={route.exact}
-                            name={route.name}
-                            render={props => <route.component {...props} />}
+                  !this.props.auth.isAdmin ? (
+                    <React.Fragment>
+                      <Route
+                        path="/dashboard/hospitals"
+                        render={props => (
+                          <ShowData
+                            {...props}
+                            columns={hospitalsColumns}
+                            fetchResourceUrl="/api/hospital"
+                            formatFetchedResource={formatHospitals}
                           />
-                        ) : null;
-                      })
-                    : null}
+                        )}
+                      />
+                      <Route
+                        path="/dashboard/users"
+                        render={props => (
+                          <ShowData
+                            {...props}
+                            columns={usersColumns}
+                            formatFetchedResource={formatUsers}
+                            fetchResourceUrl="/api/user"
+                          />
+                        )}
+                      />
+                    </React.Fragment>
+                  ) : null}
                   <Route render={() => <Redirect to="/dashboard" />} />
                 </Switch>
               </Suspense>

@@ -29,7 +29,6 @@ import DefaultLayout from "./containers/DefaultLayout";
 const WaitAccident = React.lazy(() =>
   import("./views/WaitAccident/WaitAccident")
 );
-const ShowData = React.lazy(() => import("./views/ShowData/ShowData"));
 const Profile = React.lazy(() => import("./views/Profile/Profile"));
 
 //const CoreUIIcons = React.lazy(() => import("./views/Icons/CoreUIIcons"));
@@ -54,11 +53,7 @@ export const routes = [
     exact: true,
     name: "Dashboard",
     component: DefaultLayout
-  },
-  { path: "/dashboard/accident", name: "Accident", component: WaitAccident }
+  }
+  //  { path: "/dashboard/accident", name: "Accident", component: WaitAccident }
   //  { path: "/dashboard/profile", name: "Profile", component: Profile }
-];
-export const adminRoutes = [
-  { path: "/dashboard/hospitals", name: "Hospitals", component: ShowData },
-  { path: "/dashboard/users", name: "Users", component: ShowData }
 ];
