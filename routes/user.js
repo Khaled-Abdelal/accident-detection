@@ -20,6 +20,7 @@ const upload = multer({ storage: storage });
 
 // signup route
 router.post("/", upload.single("picture"), (req, res) => {
+  console.log(req.body);
   const {
     name,
     password,
@@ -39,7 +40,7 @@ router.post("/", upload.single("picture"), (req, res) => {
     !bloodType ||
     !nextOfKin
   ) {
-    return res.json({ error: "all fields are required" });
+    return res.status(400).json({ error: "all fields are required" });
   }
   const picture = req.file.path;
 
@@ -63,7 +64,7 @@ router.post("/", upload.single("picture"), (req, res) => {
       err => {
         if (err) {
           console.log(err);
-          return res.json({ error: "couldn't register" });
+          return res.status(500).send(err);
         }
         const token = jwt.sign(
           {
