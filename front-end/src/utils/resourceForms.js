@@ -13,3 +13,14 @@ export const usersForm = [
     label: "Relative PhoneNumber"
   }
 ];
+
+export const hospitalsForm = [
+  { type: "text", name: "hospitalName", label: "Hospital Name" },
+  { type: "password", name: "password", label: "Password" },
+  {
+    type: "text",
+    name: "location.coordinates",
+    label: "Coordinates",
+    placeholder: "enter coordinates as follows ex:  longitude,latitude"
+  }
+];

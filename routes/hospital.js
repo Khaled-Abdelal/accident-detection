@@ -9,6 +9,7 @@ const keys = require("../config/keys");
 
 router.post("/login", (req, res) => {
   const { hospitalName, password } = req.body;
+
   Hospital.findOne({ hospitalName: hospitalName })
     .exec()
     .then(hospital => {
@@ -50,7 +51,6 @@ router.get("/", async (req, res) => {
 ////  new hospital
 router.post("/", (req, res) => {
   const { hospitalName, password, location } = req.body;
-
   Hospital.findOne({ hospitalName: hospitalName })
     .exec()
     .then(hospital => {
@@ -69,7 +69,7 @@ router.post("/", (req, res) => {
           newHospital.save(function(err) {
             if (err) {
               console.log(err);
-              return res.json({ error: "couldn't register" });
+              return res.status(400).json({ error: "couldn't register" });
             } else {
               const token = jwt.sign(
                 {
@@ -88,4 +88,12 @@ router.post("/", (req, res) => {
     });
 });
 
+router.delete("/:id", async (req, res) => {
+  try {
+    const hospital = await Hospital.findByIdAndDelete(req.params.id);
+    res.send(hospital._id);
+  } catch (err) {
+    res.status(500).send(err.message);
+  }
+});
 module.exports = router;

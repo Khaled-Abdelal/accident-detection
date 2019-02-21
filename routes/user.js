@@ -130,7 +130,7 @@ router.get("/:id", async (req, res) => {
 //delete user by id
 router.delete("/:id", async (req, res) => {
   user = await User.findByIdAndDelete(req.params.id);
-  return res.json(user);
+  return res.send(user._id);
 });
 // edit user
 router.put("/:id", upload.single("picture"), async (req, res) => {

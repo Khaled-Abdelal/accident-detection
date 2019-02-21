@@ -5,9 +5,8 @@ import Profile from "../../views/Profile/Profile";
 
 import { connect } from "react-redux";
 import * as actionCreators from "../../store/actions/index";
-import { usersColumns, hospitalsColumns } from "../../utils/datatableColumns";
 import { formatUsers, formatHospitals } from "../../utils/formatResource";
-import { usersForm } from "../../utils/resourceForms";
+import { usersForm, hospitalsForm } from "../../utils/resourceForms";
 
 import {
   AppBreadcrumb,
@@ -25,6 +24,7 @@ import navigation from "../../_nav";
 // routes config
 import { routes } from "../../routes";
 import PostUser from "../../views/UserForm/PostUser";
+import PostHospital from "../../views/HospitalForm/PostHospital";
 
 //const DefaultAside = React.lazy(() => import("./DefaultAside"));
 const DefaultFooter = React.lazy(() => import("./DefaultFooter"));
@@ -115,13 +115,13 @@ class DefaultLayout extends Component {
                     <React.Fragment>
                       <Route
                         path="/dashboard/hospitals"
+                        exact
                         render={props => (
                           <ShowData
-                            exact
                             {...props}
-                            columns={hospitalsColumns}
                             fetchResourceUrl="/api/hospital"
                             formatFetchedResource={formatHospitals}
+                            deleteUrl="/api/hospital/"
                           />
                         )}
                       />
@@ -131,10 +131,9 @@ class DefaultLayout extends Component {
                         render={props => (
                           <ShowData
                             {...props}
-                            columns={usersColumns}
                             formatFetchedResource={formatUsers}
                             fetchResourceUrl="/api/user"
-                            formFields={usersForm}
+                            deleteUrl="/api/user/"
                           />
                         )}
                       />
@@ -143,6 +142,13 @@ class DefaultLayout extends Component {
                         path="/dashboard/users/new"
                         render={props => {
                           return <PostUser formFields={usersForm} />;
+                        }}
+                      />
+                      <Route
+                        exact
+                        path="/dashboard/hospitals/new"
+                        render={props => {
+                          return <PostHospital formFields={hospitalsForm} />;
                         }}
                       />
                     </React.Fragment>
