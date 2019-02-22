@@ -111,7 +111,7 @@ class DefaultLayout extends Component {
 
                   {/* admin routes */}
                   {this.props.auth.loginMode === "user" &&
-                  !this.props.auth.isAdmin ? (
+                  this.props.auth.isAdmin ? (
                     <React.Fragment>
                       <Route
                         path="/dashboard/hospitals"

@@ -98,3 +98,9 @@
   display: flex;
   flex-direction: column;
 }
+.ReactTable .rt-tbody .rt-td {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  overflow: auto;
+}

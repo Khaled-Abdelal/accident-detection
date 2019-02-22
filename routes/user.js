@@ -110,7 +110,8 @@ router.post("/login", async (req, res) => {
       bloodType: user.bloodType,
       nextOfKin: user.nextOfKin,
       phoneNumber: user.phoneNumber,
-      loginMode: "user"
+      loginMode: "user",
+      isAdmin: user.isAdmin
     },
     keys.JWT_USER_KEY
   );

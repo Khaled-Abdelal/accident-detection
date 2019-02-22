@@ -1,7 +1,11 @@
 import React, { Component } from "react";
 import { Formik, Form, Field } from "formik";
+import { withRouter } from "react-router-dom";
 import axios from "axios";
-export default class PostHospital extends Component {
+import get from "lodash/get";
+import * as Yup from "yup";
+
+class PostHospital extends Component {
   submitHospital = values => {
     if (typeof values.location.coordinates === "string") {
       values.location.coordinates = values.location.coordinates.split(",");
@@ -17,12 +21,31 @@ export default class PostHospital extends Component {
       .post("/api/hospital", values)
       .then(hospital => {
         console.log(hospital);
+        this.props.history.push("/dashboard/hospitals");
       })
       .catch(err => {
         console.log(err);
       });
   };
-
+  //// sign up Schema
+  SignupSchema = Yup.object().shape({
+    hospitalName: Yup.string()
+      .min(2, "Too Short!")
+      .max(50, "Too Long!")
+      .required("Required"),
+    password: Yup.string()
+      .min(2, "Too Short!")
+      .max(50, "Too Long!")
+      .required("Required"),
+    location: Yup.object().shape({
+      coordinates: Yup.string()
+        .matches(
+          /^(\s*-?\d+(\.\d+)?)(\s*,\s*-?\d+(\.\d+)?)?$/,
+          "pattern doesn't match ex: longitude,latitude"
+        )
+        .required("Required")
+    })
+  });
   render() {
     return (
       <div className="container bg-light p-5">
@@ -34,23 +57,36 @@ export default class PostHospital extends Component {
               coordinates: ""
             }
           }}
+          validationSchema={this.SignupSchema}
           onSubmit={this.submitHospital}
         >
-          {({ values, errors }) => (
+          {({ touched, errors }) => (
             <Form>
               {this.props.formFields.map(
                 ({ name, type, label, placeholder }) => {
                   return (
-                    <div className="form-group" key={name}>
-                      <label htmlFor={name}>{label}</label>
-                      <Field
-                        type={type}
-                        name={name}
-                        className="form-control"
-                        id={name}
-                        placeholder={placeholder}
-                      />
-                    </div>
+                    <React.Fragment key={name}>
+                      <div className="form-group">
+                        <label htmlFor={name}>{label}</label>
+                        <Field
+                          type={type}
+                          name={name}
+                          className={
+                            "form-control " +
+                            (get(errors, name) && get(touched, name)
+                              ? "is-invalid"
+                              : "")
+                          }
+                          id={name}
+                          placeholder={placeholder}
+                        />
+                        {get(errors, name) && get(touched, name) ? (
+                          <div className="invalid-feedback d-block ">
+                            {get(errors, name)}
+                          </div>
+                        ) : null}
+                      </div>
+                    </React.Fragment>
                   );
                 }
               )}
@@ -64,3 +100,5 @@ export default class PostHospital extends Component {
     );
   }
 }
+
+export default withRouter(PostHospital);

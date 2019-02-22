@@ -1,9 +1,12 @@
 import React, { Component } from "react";
 import { Formik, Form, Field } from "formik";
 import axios from "axios";
+import get from "lodash/get";
+import * as Yup from "yup";
+import { withRouter } from "react-router-dom";
 //import FormData from "form-data";
 
-export default class PostUser extends Component {
+class PostUser extends Component {
   submitUser = values => {
     const config = { headers: { "Content-Type": "multipart/form-data" } };
     let fd = new FormData();
@@ -20,12 +23,42 @@ export default class PostUser extends Component {
       .post("/api/user", fd, config)
       .then(user => {
         console.log(user);
+        this.props.history.push("/dashboard/users");
       })
       .catch(err => {
         console.log(err);
       });
   };
-
+  SignupSchema = Yup.object().shape({
+    name: Yup.string()
+      .min(2, "Too Short!")
+      .max(50, "Too Long!")
+      .required("Required"),
+    password: Yup.string()
+      .min(2, "Too Short!")
+      .max(50, "Too Long!")
+      .required("Required"),
+    phoneNumber: Yup.string()
+      .required("Required")
+      .matches(/^(010|011|012|015)[0-9]{8}$/, "Not a valid phone number"),
+    nextOfKin: Yup.object().shape({
+      name: Yup.string()
+        .min(2, "Too Short!")
+        .max(50, "Too Long!")
+        .required("Required"),
+      phoneNumber: Yup.string()
+        .required("Required")
+        .matches(/^(010|011|012|015)[0-9]{8}$/, "Not a valid phone number")
+    }),
+    device_id: Yup.string().required("Required"),
+    address: Yup.string().required("Required"),
+    bloodType: Yup.string()
+      .required("Required")
+      .matches(
+        /^(A|B|AB|O)[+-]$/,
+        "Not valid Blood type ex: AB-,AB+,A-,A+,O-,O+,B-,B+"
+      )
+  });
   render() {
     return (
       <div className="container bg-light p-5">
@@ -43,9 +76,10 @@ export default class PostUser extends Component {
             address: "",
             picture: null
           }}
+          validationSchema={this.SignupSchema}
           onSubmit={this.submitUser}
         >
-          {({ values, errors, setFieldValue }) => (
+          {({ touched, errors, setFieldValue }) => (
             <Form>
               {this.props.formFields.map(({ name, type, label }) => {
                 return (
@@ -54,9 +88,19 @@ export default class PostUser extends Component {
                     <Field
                       type={type}
                       name={name}
-                      className="form-control"
+                      className={
+                        "form-control " +
+                        (get(errors, name) && get(touched, name)
+                          ? "is-invalid"
+                          : "")
+                      }
                       id={name}
                     />
+                    {get(errors, name) && get(touched, name) ? (
+                      <div className="invalid-feedback d-block ">
+                        {get(errors, name)}
+                      </div>
+                    ) : null}
                   </div>
                 );
               })}
@@ -83,3 +127,5 @@ export default class PostUser extends Component {
     );
   }
 }
+
+export default withRouter(PostUser);
