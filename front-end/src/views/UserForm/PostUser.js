@@ -20,7 +20,11 @@ class PostUser extends Component {
 
     console.log(fd);
     axios
-      .post("/api/user", fd, config)
+      .post("/api/user", fd, {
+        headers: {
+          authorization: "Bearer " + localStorage.getItem("auth-token")
+        }
+      })
       .then(user => {
         console.log(user);
         this.props.history.push("/dashboard/users");

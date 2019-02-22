@@ -18,7 +18,11 @@ class PostHospital extends Component {
     }
 
     axios
-      .post("/api/hospital", values)
+      .post("/api/hospital", values, {
+        headers: {
+          authorization: "Bearer " + localStorage.getItem("auth-token")
+        }
+      })
       .then(hospital => {
         console.log(hospital);
         this.props.history.push("/dashboard/hospitals");

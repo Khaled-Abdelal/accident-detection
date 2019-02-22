@@ -100,7 +100,11 @@ class ShowData extends Component {
     //// fetch data
     console.log(this.props);
     axios
-      .get(this.props.fetchResourceUrl)
+      .get(this.props.fetchResourceUrl, {
+        headers: {
+          authorization: "Bearer " + localStorage.getItem("auth-token")
+        }
+      })
       .then(res => {
         const formatedData = this.props.formatFetchedResource(res);
         this.setState({ data: formatedData });
@@ -111,7 +115,11 @@ class ShowData extends Component {
   //// delete resource
   deleteResource = id => {
     axios
-      .delete(this.props.deleteUrl + id)
+      .delete(this.props.deleteUrl + id, {
+        headers: {
+          authorization: "Bearer " + localStorage.getItem("auth-token")
+        }
+      })
       .then(res => {
         this.setState(prevState => {
           const newData = prevState.data.filter(element => {
