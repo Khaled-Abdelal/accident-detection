@@ -41,17 +41,13 @@ const Page500 = Loadable({
 
 class App extends Component {
   state = {
-    toLogin: true,
-    hospitalName: "",
-    password: "",
-    error: "",
-    loggedHospital: {}
+    toLogin: true
   };
 
   componentDidMount() {
     if (localStorage.getItem("auth-token") != null) {
       this.props.getUserFromLocalStorage();
-      this.props.history.push("dashboard");
+      //this.props.history.push("dashboard");
     }
   }
   render() {
@@ -59,17 +55,15 @@ class App extends Component {
       <Switch>
         <Route
           exact
-          path="/login"
+          path="/login/hospital"
           name="Login Page"
-          render={props => (
-            <Login
-              {...props}
-              hospitalName={this.state.hospitalName}
-              password={this.state.password}
-              onInputChange={this.onInputChange}
-              onHospitalSubmit={this.onHospitalSubmit}
-            />
-          )}
+          render={props => <Login {...props} loginMode="hospital" />}
+        />
+        <Route
+          exact
+          path="/login/user"
+          name="Login Page"
+          render={props => <Login {...props} loginMode="user" />}
         />
         <Route
           exact
@@ -79,17 +73,15 @@ class App extends Component {
         />
         <Route exact path="/404" name="Page 404" component={Page404} />
         <Route exact path="/500" name="Page 500" component={Page500} />
+        {this.props.isAuth && (
+          <Route path="/dashboard" name="Home" component={DefaultLayout} />
+        )}
         <Route
           path="/"
-          name="Home"
-          component={() =>
-            this.props.isAuth ? (
-              <DefaultLayout hospital={this.props.user} />
-            ) : (
-              <Redirect to="/login" />
-            )
-          }
+          exact
+          component={() => <Redirect to="/dashboard/home" />}
         />
+        {!this.props.isAuth && <Redirect to="/login/hospital" />}
       </Switch>
     );
   }

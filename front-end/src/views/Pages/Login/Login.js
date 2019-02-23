@@ -21,6 +21,7 @@ class Login extends Component {
   state = {
     hospitalName: "",
     password: "",
+    name: "",
     error: ""
   };
 
@@ -28,25 +29,42 @@ class Login extends Component {
     this.setState({ [e.target.name]: e.target.value });
   };
 
-  onHospitalSubmit = e => {
+  onSubmit = e => {
     e.preventDefault();
-    if (this.state.hospitalName === "" || this.state.password === "") {
-      return this.setState({ error: "name and password are both required" });
+    if (this.props.loginMode === "hospital") {
+      if (this.state.hospitalName === "" || this.state.password === "") {
+        return this.setState({ error: "name and password are both required" });
+      } else {
+        this.props.loginStart(
+          this.state.hospitalName,
+          this.state.password,
+          this.props.loginMode
+        );
+      }
+    } else if (this.props.loginMode === "user") {
+      if (this.state.name === "" || this.state.password === "") {
+        return this.setState({ error: "name and password are both required" });
+      } else {
+        this.props.loginStart(
+          this.state.name,
+          this.state.password,
+          this.props.loginMode
+        );
+      }
     }
-    this.props.loginStart(this.state.hospitalName, this.state.password);
   };
 
   render() {
     return (
       <div className="app flex-row align-items-center">
-        {this.props.isAuth ? <Redirect to="/" /> : null}
+        {this.props.isAuth ? <Redirect to="/dashboard/home" /> : null}
         <Container>
           <Row className="justify-content-center">
             <Col md="8">
               <CardGroup>
                 <Card className="p-4">
                   <CardBody>
-                    <Form onSubmit={this.onHospitalSubmit}>
+                    <Form onSubmit={this.onSubmit}>
                       <h1>Login</h1>
                       <p className="text-muted">Sign In to your account</p>
                       <InputGroup className="mb-3">
@@ -55,14 +73,25 @@ class Login extends Component {
                             <i className="icon-user" />
                           </InputGroupText>
                         </InputGroupAddon>
-                        <Input
-                          type="text"
-                          placeholder="Username"
-                          autoComplete="username"
-                          value={this.state.hospitalName}
-                          name="hospitalName"
-                          onChange={this.onInputChange}
-                        />
+                        {this.props.loginMode === "hospital" ? (
+                          <Input
+                            type="text"
+                            placeholder="hospitalName"
+                            autoComplete="hospitalName"
+                            value={this.state.hospitalName}
+                            name="hospitalName"
+                            onChange={this.onInputChange}
+                          />
+                        ) : (
+                          <Input
+                            type="text"
+                            placeholder="name"
+                            autoComplete="name"
+                            value={this.state.name}
+                            name="name"
+                            onChange={this.onInputChange}
+                          />
+                        )}
                       </InputGroup>
                       <InputGroup className="mb-4">
                         <InputGroupAddon addonType="prepend">

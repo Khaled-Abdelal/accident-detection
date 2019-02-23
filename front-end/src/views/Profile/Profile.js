@@ -1,12 +1,12 @@
 import React from "react";
 
-const UserWithAccident = props => {
+const Profile = props => {
   return (
     <div className="container emp-profile">
       <div className="row">
         <div className="col-md-4">
           <div className="profile-img">
-            <img src={props.user.picture} alt="" />
+            <img src={"/" + props.user.picture} alt="" />
           </div>
         </div>
         <div className="col-md-6">
@@ -107,4 +107,4 @@ const UserWithAccident = props => {
   );
 };
 
-export default UserWithAccident;
+export default Profile;

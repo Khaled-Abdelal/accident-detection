@@ -4,32 +4,41 @@ import {
   LOGIN_FAIL,
   GET_USER_FROM_LOCAL_STORAGE,
   SIGN_OUT,
-  ACCIDENT_START
+  ACCIDENT_START,
+  SET_ADDRESS,
+  SET_ROUTE
 } from "../actions/types";
 
-export const loginStart = (name, password) => {
-  return dispatch => {
-    axios
-      .post("/api/hospital/login", {
-        hospitalName: name,
-        password: password
-      })
-      .then(res => {
-        dispatch({ type: LOGIN_SUCCESS, payload: res.data });
-        // localStorage.setItem("jwt-token-hospital", res.data.token);
-        // localStorage.setItem(
-        //   "loggedHospital",
-        //   JSON.stringify(res.data.hospital)
-        // );
-
-        // this.setState({ toLogin: false, loggedHospital: res.data.hospital });
-
-        // this.props.history.push("/dashboard");
-      })
-      .catch(error => {
-        dispatch({ type: LOGIN_FAIL, payload: error });
-      });
-  };
+export const loginStart = (name, password, loginMode) => {
+  if (loginMode === "hospital") {
+    return dispatch => {
+      axios
+        .post("/api/hospital/login", {
+          hospitalName: name,
+          password: password
+        })
+        .then(res => {
+          dispatch({ type: LOGIN_SUCCESS, payload: res.data });
+        })
+        .catch(error => {
+          dispatch({ type: LOGIN_FAIL, payload: error });
+        });
+    };
+  } else if (loginMode === "user") {
+    return dispatch => {
+      axios
+        .post("/api/user/login", {
+          name,
+          password
+        })
+        .then(res => {
+          dispatch({ type: LOGIN_SUCCESS, payload: res.data });
+        })
+        .catch(error => {
+          dispatch({ type: LOGIN_FAIL, payload: error });
+        });
+    };
+  }
 };
 
 export const signOut = () => {
@@ -49,6 +58,23 @@ export const accidentStart = accident => {
     type: ACCIDENT_START,
     payload: {
       accident
+    }
+  };
+};
+
+export const setAddress = address => {
+  return {
+    type: SET_ADDRESS,
+    payload: {
+      address
+    }
+  };
+};
+export const setRoute = route => {
+  return {
+    type: SET_ROUTE,
+    payload: {
+      route
     }
   };
 };

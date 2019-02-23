@@ -1,9 +1,12 @@
 import React, { Component, Suspense } from "react";
 import { Redirect, Route, Switch, withRouter } from "react-router-dom";
 import { Container } from "reactstrap";
+import Profile from "../../views/Profile/Profile";
 
 import { connect } from "react-redux";
 import * as actionCreators from "../../store/actions/index";
+import { formatUsers, formatHospitals } from "../../utils/formatResource";
+import { usersForm, hospitalsForm } from "../../utils/resourceForms";
 
 import {
   AppBreadcrumb,
@@ -19,11 +22,19 @@ import {
 // sidebar nav config
 import navigation from "../../_nav";
 // routes config
-import routes from "../../routes";
+import { routes } from "../../routes";
+import PostUser from "../../views/UserForm/PostUser";
+import PostHospital from "../../views/HospitalForm/PostHospital";
 
 //const DefaultAside = React.lazy(() => import("./DefaultAside"));
 const DefaultFooter = React.lazy(() => import("./DefaultFooter"));
 const DefaultHeader = React.lazy(() => import("./DefaultHeader"));
+//hospital route
+const WaitAccident = React.lazy(() =>
+  import("../../views/WaitAccident/WaitAccident")
+);
+// admin route
+const ShowData = React.lazy(() => import("../../views/ShowData/ShowData"));
 
 class DefaultLayout extends Component {
   loading = () => (
@@ -44,7 +55,7 @@ class DefaultLayout extends Component {
           <Suspense fallback={this.loading()}>
             <DefaultHeader
               onLogout={e => this.signOut(e)}
-              authName={this.props.authName}
+              authName={this.props.auth.name}
             />
           </Suspense>
         </AppHeader>
@@ -74,7 +85,78 @@ class DefaultLayout extends Component {
                       />
                     ) : null;
                   })}
-                  <Redirect from="/" to="/dashboard" />
+
+                  {/* admin routes */}
+                  {this.props.auth.loginMode === "user" &&
+                  this.props.auth.isAdmin ? (
+                    <React.Fragment>
+                      <Route
+                        path="/dashboard/home"
+                        exact
+                        render={() => <Profile user={this.props.auth} />}
+                      />
+                      <Route
+                        path="/dashboard/hospitals"
+                        exact
+                        render={props => (
+                          <ShowData
+                            {...props}
+                            fetchResourceUrl="/api/hospital"
+                            formatFetchedResource={formatHospitals}
+                            deleteUrl="/api/hospital/"
+                          />
+                        )}
+                      />
+                      <Route
+                        path="/dashboard/users"
+                        exact
+                        render={props => (
+                          <ShowData
+                            {...props}
+                            formatFetchedResource={formatUsers}
+                            fetchResourceUrl="/api/user"
+                            deleteUrl="/api/user/"
+                          />
+                        )}
+                      />
+                      <Route
+                        exact
+                        path="/dashboard/users/new"
+                        render={props => {
+                          return <PostUser {...props} formFields={usersForm} />;
+                        }}
+                      />
+                      <Route
+                        exact
+                        path="/dashboard/hospitals/new"
+                        render={props => {
+                          return (
+                            <PostHospital
+                              {...props}
+                              formFields={hospitalsForm}
+                            />
+                          );
+                        }}
+                      />
+                    </React.Fragment>
+                  ) : null}
+                  {/* special route only for users */}
+                  {this.props.auth.loginMode === "user" && (
+                    <Route
+                      path="/dashboard/home"
+                      exact
+                      render={() => <Profile user={this.props.auth} />}
+                    />
+                  )}
+                  {/* special route only for hospital */}
+                  {this.props.auth.loginMode === "hospital" && (
+                    <Route
+                      path="/dashboard/home"
+                      exact
+                      render={() => <WaitAccident />}
+                    />
+                  )}
+                  <Redirect to="/dashboard/home/" />
                 </Switch>
               </Suspense>
             </Container>
@@ -97,7 +179,7 @@ class DefaultLayout extends Component {
 
 const mapStateToProps = state => {
   return {
-    authName: state.auth.auth.name
+    auth: state.auth.auth
   };
 };
 

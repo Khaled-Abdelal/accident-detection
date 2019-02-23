@@ -4,6 +4,7 @@ const User = require("../models/User");
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 const keys = require("../config/keys");
+const authAdmin = require("../middlewares/authAdmin");
 
 // multer used to upload user picture
 
@@ -19,7 +20,8 @@ const storage = multer.diskStorage({
 const upload = multer({ storage: storage });
 
 // signup route
-router.post("/", upload.single("picture"), (req, res) => {
+router.post("/", authAdmin, upload.single("picture"), (req, res) => {
+  console.log(req.body);
   const {
     name,
     password,
@@ -39,7 +41,7 @@ router.post("/", upload.single("picture"), (req, res) => {
     !bloodType ||
     !nextOfKin
   ) {
-    return res.json({ error: "all fields are required" });
+    return res.status(400).json({ error: "all fields are required" });
   }
   const picture = req.file.path;
 
@@ -63,7 +65,7 @@ router.post("/", upload.single("picture"), (req, res) => {
       err => {
         if (err) {
           console.log(err);
-          return res.json({ error: "couldn't register" });
+          return res.status(500).send(err);
         }
         const token = jwt.sign(
           {
@@ -73,7 +75,8 @@ router.post("/", upload.single("picture"), (req, res) => {
             address,
             bloodType,
             nextOfKin,
-            phoneNumber
+            phoneNumber,
+            loginMode: "user"
           },
           keys.JWT_USER_KEY
         );
@@ -105,9 +108,11 @@ router.post("/login", async (req, res) => {
       device_id: user.device_id,
       picture: user.picture,
       address: user.address,
-      bloodType: bloodType,
+      bloodType: user.bloodType,
       nextOfKin: user.nextOfKin,
-      phoneNumber: user.phoneNumber
+      phoneNumber: user.phoneNumber,
+      loginMode: "user",
+      isAdmin: user.isAdmin
     },
     keys.JWT_USER_KEY
   );
@@ -115,9 +120,9 @@ router.post("/login", async (req, res) => {
 });
 
 // get all users
-router.get("/", async (req, res) => {
-  user = await User.find({}).exec();
-  return res.json({ users: user });
+router.get("/", authAdmin, async (req, res) => {
+  const users = await User.find({}).exec();
+  return res.send(users);
 });
 // get user by id
 router.get("/:id", async (req, res) => {
@@ -125,12 +130,12 @@ router.get("/:id", async (req, res) => {
   return res.json({ user: user });
 });
 //delete user by id
-router.delete("/:id", async (req, res) => {
+router.delete("/:id", authAdmin, async (req, res) => {
   user = await User.findByIdAndDelete(req.params.id);
-  return res.json(user);
+  return res.send(user._id);
 });
 // edit user
-router.put("/:id", upload.single("picture"), async (req, res) => {
+router.put("/:id", authAdmin, upload.single("picture"), async (req, res) => {
   if (req.file) {
     req.body.picture = req.file.path;
   }
