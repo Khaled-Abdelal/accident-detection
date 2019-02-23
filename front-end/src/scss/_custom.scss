@@ -99,8 +99,10 @@
   flex-direction: column;
 }
 .ReactTable .rt-tbody .rt-td {
-  display: flex;
-  justify-content: center;
-  align-items: center;
   overflow: auto;
+  text-align: center;
+}
+.ReactTable .rt-th,
+.ReactTable .rt-td {
+  text-overflow: inherit !important;
 }

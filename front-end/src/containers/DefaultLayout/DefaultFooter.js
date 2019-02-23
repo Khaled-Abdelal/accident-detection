@@ -19,7 +19,7 @@ class DefaultFooter extends Component {
         </span>
         <span className="ml-auto">
           {" "}
-          <a href="#">Accident Detections Project</a>
+          <a href="#">Accidents Detection Project</a>
         </span>
       </React.Fragment>
     );
