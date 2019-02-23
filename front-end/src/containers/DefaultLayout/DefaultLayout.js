@@ -37,11 +37,6 @@ const WaitAccident = React.lazy(() =>
 const ShowData = React.lazy(() => import("../../views/ShowData/ShowData"));
 
 class DefaultLayout extends Component {
-  componentDidMount = () => {
-    if (this.props.auth.loginMode === "user") {
-    }
-  };
-
   loading = () => (
     <div className="animated fadeIn pt-1 text-center">Loading...</div>
   );
@@ -90,29 +85,16 @@ class DefaultLayout extends Component {
                       />
                     ) : null;
                   })}
-                  {/* special route only for users */}
-                  {this.props.auth.loginMode === "user" && (
-                    <Route
-                      path="/dashboard"
-                      exact
-                      render={props => (
-                        <Profile {...props} user={this.props.auth} />
-                      )}
-                    />
-                  )}
-                  {/* special route only for hospital */}
-                  {this.props.auth.loginMode === "hospital" && (
-                    <Route
-                      path="/dashboard"
-                      exact
-                      render={props => <WaitAccident />}
-                    />
-                  )}
 
                   {/* admin routes */}
                   {this.props.auth.loginMode === "user" &&
                   this.props.auth.isAdmin ? (
                     <React.Fragment>
+                      <Route
+                        path="/dashboard/home"
+                        exact
+                        render={() => <Profile user={this.props.auth} />}
+                      />
                       <Route
                         path="/dashboard/hospitals"
                         exact
@@ -141,19 +123,40 @@ class DefaultLayout extends Component {
                         exact
                         path="/dashboard/users/new"
                         render={props => {
-                          return <PostUser formFields={usersForm} />;
+                          return <PostUser {...props} formFields={usersForm} />;
                         }}
                       />
                       <Route
                         exact
                         path="/dashboard/hospitals/new"
                         render={props => {
-                          return <PostHospital formFields={hospitalsForm} />;
+                          return (
+                            <PostHospital
+                              {...props}
+                              formFields={hospitalsForm}
+                            />
+                          );
                         }}
                       />
                     </React.Fragment>
                   ) : null}
-                  <Route render={() => <Redirect to="/dashboard" />} />
+                  {/* special route only for users */}
+                  {this.props.auth.loginMode === "user" && (
+                    <Route
+                      path="/dashboard/home"
+                      exact
+                      render={() => <Profile user={this.props.auth} />}
+                    />
+                  )}
+                  {/* special route only for hospital */}
+                  {this.props.auth.loginMode === "hospital" && (
+                    <Route
+                      path="/dashboard/home"
+                      exact
+                      render={() => <WaitAccident />}
+                    />
+                  )}
+                  <Redirect to="/dashboard/home/" />
                 </Switch>
               </Suspense>
             </Container>

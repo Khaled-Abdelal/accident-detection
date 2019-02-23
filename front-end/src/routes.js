@@ -48,12 +48,11 @@ const Profile = React.lazy(() => import("./views/Profile/Profile"));
 
 // https://github.com/ReactTraining/react-router/tree/master/packages/react-router-config
 export const routes = [
-  {
-    path: "/dashboard",
-    exact: true,
-    name: "Dashboard",
-    component: DefaultLayout
-  }
+  // {
+  //   path: "/dashboard",
+  //   name: "Dashboard",
+  //   component: DefaultLayout
+  // }
   //  { path: "/dashboard/accident", name: "Accident", component: WaitAccident }
   //  { path: "/dashboard/profile", name: "Profile", component: Profile }
 ];

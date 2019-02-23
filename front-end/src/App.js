@@ -73,18 +73,15 @@ class App extends Component {
         />
         <Route exact path="/404" name="Page 404" component={Page404} />
         <Route exact path="/500" name="Page 500" component={Page500} />
+        {this.props.isAuth && (
+          <Route path="/dashboard" name="Home" component={DefaultLayout} />
+        )}
         <Route
-          path="/dashboard"
-          name="Home"
-          component={() =>
-            this.props.isAuth ? (
-              <DefaultLayout hospital={this.props.user} />
-            ) : (
-              <Redirect to="/login/hospital" />
-            )
-          }
+          path="/"
+          exact
+          component={() => <Redirect to="/dashboard/home" />}
         />
-        <Route path="/" component={() => <Redirect to="/dashboard" />} />
+        {!this.props.isAuth && <Redirect to="/login/hospital" />}
       </Switch>
     );
   }

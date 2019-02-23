@@ -98,7 +98,6 @@ class ShowData extends Component {
       this.setState({ columns: usersColumns });
     }
     //// fetch data
-    console.log(this.props);
     axios
       .get(this.props.fetchResourceUrl, {
         headers: {

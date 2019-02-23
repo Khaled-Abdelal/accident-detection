@@ -57,7 +57,7 @@ class Login extends Component {
   render() {
     return (
       <div className="app flex-row align-items-center">
-        {this.props.isAuth ? <Redirect to="/" /> : null}
+        {this.props.isAuth ? <Redirect to="/dashboard/home" /> : null}
         <Container>
           <Row className="justify-content-center">
             <Col md="8">

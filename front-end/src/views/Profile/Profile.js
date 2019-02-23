@@ -6,7 +6,7 @@ const Profile = props => {
       <div className="row">
         <div className="col-md-4">
           <div className="profile-img">
-            <img src={props.user.picture} alt="" />
+            <img src={"/" + props.user.picture} alt="" />
           </div>
         </div>
         <div className="col-md-6">

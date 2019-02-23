@@ -24,7 +24,6 @@ class PostHospital extends Component {
         }
       })
       .then(hospital => {
-        console.log(hospital);
         this.props.history.push("/dashboard/hospitals");
       })
       .catch(err => {
