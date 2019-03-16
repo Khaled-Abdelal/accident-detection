@@ -5,23 +5,31 @@ const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 const keys = require("../config/keys");
 const authAdmin = require("../middlewares/authAdmin");
+const sharp = require("sharp");
 
 // multer used to upload user picture
 
 const multer = require("multer");
-const storage = multer.diskStorage({
-  destination: (req, file, callback) => {
-    callback(null, "uploads/");
-  },
-  filename: (req, file, callback) => {
-    callback(null, new Date().toISOString() + file.originalname);
+// const storage = multer.diskStorage({
+//   destination: (req, file, callback) => {
+//     callback(null, "uploads/");
+//   },
+//   filename: (req, file, callback) => {
+//     callback(null, new Date().toISOString() + file.originalname);
+//   }
+// });
+// const upload = multer({ storage: storage });
+const upload = multer({
+  limits: { fileSize: 10000000 },
+  fileFilter(req, file, cb) {
+    if (!file.originalname.match(/\.(jpg|jpeg|png)$/)) {
+      return cb(new Error("please upload an image"));
+    }
+    cb(undefined, true);
   }
 });
-const upload = multer({ storage: storage });
-
 // signup route
-router.post("/", authAdmin, upload.single("picture"), (req, res) => {
-  console.log(req.body);
+router.post("/", authAdmin, upload.single("picture"), async (req, res) => {
   const {
     name,
     password,
@@ -43,16 +51,21 @@ router.post("/", authAdmin, upload.single("picture"), (req, res) => {
   ) {
     return res.status(400).json({ error: "all fields are required" });
   }
-  const picture = req.file.path;
 
-  bcrypt.hash(password, 8, (err, hash) => {
-    if (err) {
-      console.log("hash error");
-      return res.status(500).json({ error: "couldn't register" });
-    }
+  try {
+    const buffer = await sharp(req.file.buffer)
+      .rotate()
+      .resize({ width: 250, height: 250 })
+      .png()
+      .toBuffer();
+    const picture = buffer;
+    bcrypt.hash(password, 8, async (err, hash) => {
+      if (err) {
+        console.log("hash error");
+        return res.status(500).json({ error: "couldn't register" });
+      }
 
-    User.create(
-      {
+      const user = new User({
         name,
         picture,
         device_id,
@@ -61,29 +74,35 @@ router.post("/", authAdmin, upload.single("picture"), (req, res) => {
         bloodType,
         nextOfKin,
         phoneNumber
-      },
-      err => {
-        if (err) {
-          console.log(err);
+      });
+      user
+        .save()
+        .then(user => {
+          console.log(user);
+
+          const token = jwt.sign(
+            {
+              name,
+              device_id,
+              picture,
+              address,
+              bloodType,
+              nextOfKin,
+              phoneNumber,
+              loginMode: "user"
+            },
+            keys.JWT_USER_KEY
+          );
+          return res.json({ message: "success", token: token });
+        })
+        .catch(err => {
           return res.status(500).send(err);
-        }
-        const token = jwt.sign(
-          {
-            name,
-            device_id,
-            picture,
-            address,
-            bloodType,
-            nextOfKin,
-            phoneNumber,
-            loginMode: "user"
-          },
-          keys.JWT_USER_KEY
-        );
-        res.json({ message: "success", token: token });
-      }
-    );
-  });
+        });
+    });
+  } catch (err) {
+    console.log(err);
+    return res.status(500).send(err);
+  }
 });
 
 //login
@@ -106,7 +125,7 @@ router.post("/login", async (req, res) => {
     {
       name: user.name,
       device_id: user.device_id,
-      picture: user.picture,
+      _id: user._id,
       address: user.address,
       bloodType: user.bloodType,
       nextOfKin: user.nextOfKin,
@@ -151,4 +170,29 @@ router.put("/:id", authAdmin, upload.single("picture"), async (req, res) => {
   updatedUser = await User.findById(req.params.id).exec();
   return res.json({ user: updatedUser });
 });
+
+//serve user image
+router.get("/:id/avatar", async (req, res, next) => {
+  try {
+    const user = await User.findById(req.params.id);
+    if (!user || !user.picture) {
+      throw new Error("can't find picture");
+    }
+    res.set("Content-Type", "image/png");
+    res.send(user.picture);
+  } catch (err) {
+    return res.send(err);
+  }
+});
+
+//make an admin when needed
+// router.post("/:id/me", async (req, res) => {
+//   const user = await User.findByIdAndUpdate(
+//     req.params.id,
+//     { $set: { isAdmin: true } },
+//     { new: true }
+//   );
+//   return res.send(user);
+// });
+
 module.exports = router;
