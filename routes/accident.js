@@ -55,7 +55,7 @@ router.post("/", async (req, res) => {
       relativePhoneNumber: user.nextOfKin.phoneNumber,
       accidentLocation: data.results[0].formatted_address
     };
-    return res.send(response).end();
+    res.send(response).end();
   } catch (err) {
     console.log(err);
     return res.status(500).json({ error: "internal server error" });
