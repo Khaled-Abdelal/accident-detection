@@ -55,6 +55,7 @@ router.post("/", async (req, res) => {
       relativePhoneNumber: user.nextOfKin.phoneNumber,
       accidentLocation: data.results[0].formatted_address
     };
+    console.log(response);
     res.send(response).end();
   } catch (err) {
     console.log(err);
