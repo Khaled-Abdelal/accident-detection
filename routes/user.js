@@ -160,10 +160,7 @@ router.put("/:id", authAdmin, upload.single("picture"), async (req, res) => {
   }
   if (req.body.password) {
     const hash = bcryptSync.hash(req.body.password, 8);
-    // if (err) {
-    //   console.log("hash error");
-    //   return res.status(500).json({ error: "couldn't update" });
-    // }
+   
     req.body.password = hash;
   }
   user = await User.findOneAndUpdate({ _id: req.params.id }, req.body).exec();

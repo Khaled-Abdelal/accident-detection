@@ -2,7 +2,8 @@ const express = require("express");
 const router = express.Router();
 const Hospital = require("../models/Hospital");
 const User = require("./../models/User");
-
+const axios = require("axios");
+const keys = require("../config/keys");
 router.post("/", async (req, res) => {
   const { location, device_id } = req.body;
 
@@ -42,8 +43,19 @@ router.post("/", async (req, res) => {
         .in(hospital._id)
         .emit("accident", { location: location, user: user });
     });
-
-    res.end();
+    const { data } = await axios.get(
+      `https://maps.google.com/maps/api/geocode/json?latlng=${
+        req.body.location[1]
+      }
+    ,${req.body.location[0]}&key=${keys.GOOGLE_API_KEY}&language=ar`
+    );
+    const response = {
+      userName: user.name,
+      relativeName: user.nextOfKin.name,
+      relativePhoneNumber: user.nextOfKin.phoneNumber,
+      accidentLocation: data.results[0].formatted_address
+    };
+    return res.send(response).end();
   } catch (err) {
     console.log(err);
     return res.status(500).json({ error: "internal server error" });
