@@ -32,9 +32,10 @@ mongoose.connect(keys.mongoURI, {
 io.on("connection", socket => {
   console.log("New client connected");
   socket.on("disconnect", () => console.log("Client disconnected"));
-  socket.on("join", data => {
+  socket.on("join", (data, callback) => {
     console.log(data.id);
     socket.join(data.id); // We are using room of socket io
+    callback(data.id);
   });
 });
 

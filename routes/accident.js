@@ -32,17 +32,17 @@ router.post("/", async (req, res) => {
         }
       }
     ]);
-    console.log(hospitals);
     if (hospitals.length === 0) {
       return res.status(400).json({ message: "no hospital near you" });
     }
 
-    hospitals.forEach(hospital => {
+    await hospitals.forEach(hospital => {
       console.log(hospital._id);
       req.io.sockets
         .in(hospital._id)
         .emit("accident", { location: location, user: user });
     });
+    console.log("out");
     const { data } = await axios.get(
       `https://maps.google.com/maps/api/geocode/json?latlng=${
         req.body.location[1]
@@ -55,7 +55,6 @@ router.post("/", async (req, res) => {
       relativePhoneNumber: user.nextOfKin.phoneNumber,
       accidentLocation: data.results[0].formatted_address
     };
-    console.log(response);
     res.send(response).end();
   } catch (err) {
     console.log(err);

@@ -37,7 +37,7 @@ class WaitAccident extends Component {
     // join a specific room
 
     socket.emit("join", { id: this.props.auth.id }, data => {
-      console.log("private connection made");
+      console.log("private connection made", data);
     });
     socket.on("disconnect", () => {
       console.log("client disconnected");
