@@ -31,58 +31,56 @@ class WaitAccident extends Component {
 
     // make connection
     socket.on("connect", () => {
-      console.log("initial connection ");
-      this.setState({ connected: true });
-    });
-    // join a specific room
-
-    socket.emit("join", { id: this.props.auth.id }, data => {
-      console.log("private connection made", data);
-    });
-    socket.on("disconnect", () => {
-      console.log("client disconnected");
-      this.setState({ connected: false });
-    });
-    // listen for accident
-    socket.on("accident", data => {
-      console.log(data);
-      this.props.accidentStart(data);
-      const google = window.google;
-      ///// get route
-      const DirectionsService = new google.maps.DirectionsService();
-      DirectionsService.route(
-        {
-          origin: new google.maps.LatLng(
-            this.props.auth.location.coordinates[1],
-            this.props.auth.location.coordinates[0]
-          ),
-          destination: new google.maps.LatLng(
-            this.props.accident.location[1],
-            this.props.accident.location[0]
-          ),
-          travelMode: google.maps.TravelMode.DRIVING
-        },
-        (result, status) => {
-          if (status === google.maps.DirectionsStatus.OK) {
-            this.props.setRoute(result);
-          } else {
-            console.error(`error fetching directions ${result}`);
+      // join a specific room
+      socket.emit("join", { id: this.props.auth.id }, data => {
+        console.log("private connection made", data);
+      });
+      socket.on("disconnect", () => {
+        console.log("client disconnected");
+        this.setState({ connected: false });
+      });
+      // listen for accident
+      socket.on("accident", data => {
+        console.log(data);
+        this.props.accidentStart(data);
+        const google = window.google;
+        ///// get route
+        const DirectionsService = new google.maps.DirectionsService();
+        DirectionsService.route(
+          {
+            origin: new google.maps.LatLng(
+              this.props.auth.location.coordinates[1],
+              this.props.auth.location.coordinates[0]
+            ),
+            destination: new google.maps.LatLng(
+              this.props.accident.location[1],
+              this.props.accident.location[0]
+            ),
+            travelMode: google.maps.TravelMode.DRIVING
+          },
+          (result, status) => {
+            if (status === google.maps.DirectionsStatus.OK) {
+              this.props.setRoute(result);
+            } else {
+              console.error(`error fetching directions ${result}`);
+            }
           }
-        }
-      );
-      // get address
-      axios
-        .get(
-          "https://maps.google.com/maps/api/geocode/json?latlng=" +
-            this.props.accident.location[1] +
-            "," +
-            this.props.accident.location[0] +
-            "&key=AIzaSyBwxuW2cdXbL38w9dcPOXfGLmi1J7AVVB8&language=ar"
-        )
-        .then(res => this.props.setAddress(res.data.results))
-        .catch(error => {
-          console.log(error);
-        });
+        );
+        // get address
+        axios
+          .get(
+            "https://maps.google.com/maps/api/geocode/json?latlng=" +
+              this.props.accident.location[1] +
+              "," +
+              this.props.accident.location[0] +
+              "&key=AIzaSyBwxuW2cdXbL38w9dcPOXfGLmi1J7AVVB8&language=ar"
+          )
+          .then(res => this.props.setAddress(res.data.results))
+          .catch(error => {
+            console.log(error);
+          });
+      });
+      this.setState({ connected: true });
     });
   }
   render() {
