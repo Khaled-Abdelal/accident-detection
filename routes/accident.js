@@ -36,9 +36,9 @@ router.post("/", async (req, res) => {
       return res.status(400).json({ message: "no hospital near you" });
     }
 
-    hospitals.forEach(hospital => {
+    hospitals.forEach(async hospital => {
       console.log(hospital._id);
-      req.io.sockets
+      await req.io.sockets
         .in(hospital._id)
         .emit("accident", { location: location, user: user });
     });
