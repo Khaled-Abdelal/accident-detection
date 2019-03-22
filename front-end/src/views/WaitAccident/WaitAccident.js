@@ -5,31 +5,46 @@ import * as actionCreators from "../../store/actions/index";
 import Directions from "../Directions/Directions";
 import Profile from "../Profile/Profile";
 import axios from "axios";
+import connected from "../../assets/img/connected.png";
+import disconnected from "../../assets/img/disconnected.png";
+
 //import { timingSafeEqual } from "crypto";
 
 const MyGoogleMap = React.lazy(() => import("../MyGoogleMap/MyGoogleMap"));
 
 class WaitAccident extends Component {
-  constructor(props) {
-    super(props);
-    this.socket = socketIOClient("/");
-  }
-
+  state = {
+    socket: null,
+    connected: false
+  };
   /// close connection
   componentWillUnmount = () => {
-    this.socket.close();
+    this.state.socket.close();
+    console.log("closed");
   };
 
   componentDidMount() {
+    let socket = socketIOClient("/");
+    this.setState(state => {
+      return { socket };
+    });
+
     // make connection
-    this.socket.on("connection", console.log("initial connection "));
+    socket.on("connect", () => {
+      console.log("initial connection ");
+      this.setState({ connected: true });
+    });
     // join a specific room
 
-    this.socket.emit("join", { id: this.props.auth.id }, data => {
+    socket.emit("join", { id: this.props.auth.id }, data => {
       console.log("private connection made");
     });
+    socket.on("disconnect", () => {
+      console.log("client disconnected");
+      this.setState({ connected: false });
+    });
     // listen for accident
-    this.socket.on("accident", data => {
+    socket.on("accident", data => {
       console.log(data);
       this.props.accidentStart(data);
       const google = window.google;
@@ -73,6 +88,22 @@ class WaitAccident extends Component {
   render() {
     return (
       <div>
+        <div>
+          {this.state.connected ? (
+            <div>
+              <h2>
+                Connected <img src={connected} style={{ width: "40px" }} />
+              </h2>
+            </div>
+          ) : (
+            <div>
+              <h2>
+                Disconnected{" "}
+                <img src={disconnected} style={{ width: "40px" }} />
+              </h2>
+            </div>
+          )}
+        </div>
         <MyGoogleMap
           isMarkerShown
           googleMapURL="https://maps.google.com/maps/api/js?sensor=false&libraries=places&key=AIzaSyBwxuW2cdXbL38w9dcPOXfGLmi1J7AVVB8&fbclid=IwAR2j1WuVfgQAkSeja4OafxDevzO5S1kwhm4FLEnjXPqKO1rkcH9hivUVXQY"
