@@ -38,6 +38,7 @@ router.post("/", async (req, res) => {
 
     hospitals.forEach(async hospital => {
       console.log(hospital._id);
+      // await is important it fixed the  client disconnect bug
       await req.io.sockets
         .in(hospital._id)
         .emit("accident", { location: location, user: user });
